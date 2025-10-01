@@ -11,8 +11,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key="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")
 
 router = APIRouter()
 
