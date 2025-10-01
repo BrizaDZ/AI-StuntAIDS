@@ -18,21 +18,26 @@ router = APIRouter()
 df_stunting = pd.read_csv("data/stunting_dataset.csv")
 df_stunting["text"] = df_stunting["text"].astype(str)
 
+# Data MPASI
 df_mpasi = pd.read_excel("data/dataset_mpasi.xlsx")
 df_mpasi["text"] = df_mpasi.apply(
     lambda row: f"{row['nama_makanan']} - {row['bahan']} - {row['tekstur']} - {row['cocok_untuk']} - {row['resep']}",
     axis=1,
 )
 
+# Model embedding
 embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
+# Embedding stunting
 stunting_embeddings = embedding_model.encode(df_stunting["text"].tolist(), convert_to_numpy=True)
 stunting_embeddings = np.array(stunting_embeddings).astype("float32")
 index_stunting = faiss.IndexFlatL2(stunting_embeddings.shape[1])
 index_stunting.add(stunting_embeddings)
 
+# Embedding MPASI
 mpasi_embeddings = embedding_model.encode(df_mpasi["text"].tolist(), convert_to_numpy=True)
 df_mpasi["embedding"] = list(mpasi_embeddings.astype("float32"))
+
 
 class MPASIQuestion(BaseModel):
     question: str
